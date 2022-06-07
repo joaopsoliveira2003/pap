@@ -1,0 +1,137 @@
+{% extends 'layout-dashboard.html' %}
+{% load static %}
+{% block conteudo_dashboard %}
+    <div class="container">
+        <div class="main-body">
+            <div class="row gutters-sm">
+                <div class="col-md-4 mb-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex flex-column align-items-center text-center">
+                                {% if user.profile.image == "" %}
+                                    <img src="{% static '/img/user.png' %}" class="rounded-circle" width="150" height="150" alt="{{user.get_full_name|default:user.username}}">
+                                {% else %}
+                                    <img src="{{user.profile.image.url}}" class="rounded-circle" width="150" height="150" alt="{{user.get_full_name|default:user.username}}">
+                                {% endif %}
+                                <div class="mt-3">
+                                    <h4>{{user.get_username}}</h4>
+                                    <p class="text-secondary mb-1">{{user.profile.bio|default:"Sem bio..."}}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% if usertype %}
+                    <div class="text-center pt-3">
+                        <button type="button" class="btn bg-steel text-light w-75" data-toggle="modal" data-target="#edit">Gerir Perfil</button>
+                    </div>
+                {% endif %}
+                </div>
+                {% if usertype %}
+                <div class="modal fade" id="edit" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header bg-steel text-light">
+                                <h5 class="lead text-light" id="staticBackdropLabel">Gerir Perfil</h5>
+                                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <form method="post" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <div class="modal-body">
+                                    <label for="first_name">Primeiro Nome:</label>
+                                    <input name="first_name" id="first_name" type="text" value="{{user.first_name|default:""}}" required>
+                                    <label for="last_name">Ultimo Nome:</label>
+                                    <input name="last_name" id="last_name" type="text" value="{{user.last_name|default:""}}" required>
+                                    <label for="email">Email:</label>
+                                    <input name="email" id="email" type="text" value="{{user.email|default:""}}" required>
+                                    <label for="bio">Bio:</label>
+                                    <input name="bio" id="bio" type="text" value="{{user.profile.bio|default:""}}" required>
+                                    <label for="photo">Imagem:</label>
+                                    <input type="file" class="form-control-file" name="image" accept="image/*">
+                                </div>
+                                <div class="modal-footer">
+                                    <a class="btn btn-outline-warning mr-auto" href="{% url 'password_change' %}">Modificar a palavra-passe</a>
+                                    <button style="margin-right: 5px;" type="submit" class="btn btn-outline-success">Editar</button>
+                                    <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Cancelar</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                <div class="col-md-8">
+                    <h4 class="lead">Informações</h4>
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    <h6 class="mb-0">Nome</h6>
+                                </div>
+                                <div class="col-sm-9 text-secondary">
+                                    {{user.get_full_name|default:"Sem nome..."}}
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    <h6 class="mb-0">Email</h6>
+                                </div>
+                                <div class="col-sm-9 text-secondary">
+                                    {{user.email|default:"Sem email..."}}
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    <h6 class="mb-0">Ultimo Acesso</h6>
+                                </div>
+                                <div class="col-sm-9 text-secondary">
+                                    {{user.last_login}}
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    <h6 class="mb-0">Criação da conta</h6>
+                                </div>
+                                <div class="col-sm-9 text-secondary">
+                                  {{user.date_joined}}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% if tickets.count != 0 %}
+                        <h4 class="lead">
+                            Últimos Pedidos
+                        </h4>
+                        <table class="table table-striped table-bordered table-responsive-xl table-hover">
+                            <thead>
+                                <tr>
+                                    <th scope="col">ID</th>
+                                    <th scope="col">Nome</th>
+                                    <th scope="col">Email</th>
+                                    <th scope="col">Assunto</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for record in tickets|dictsortreversed:"id"|slice:"5" %}
+                                    <tr>
+                                        <th scope="row">{{record.id}}</th>
+                                        <td>{{record.user.get_full_name|default:record.user.username}}</td>
+                                        <td>{{record.user.email|default:"Sem email..."}}</td>
+                                        <td>{{record.subject}}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <div class="text-center pb-3">
+                            <span>Sem tickets!</span>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

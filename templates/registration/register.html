@@ -1,0 +1,70 @@
+{% load static %}
+<!doctype html>
+<html lang="pt">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Registo - Nucleus</title>
+    <link href="{% static '/img/favicon.png' %}" rel="icon" type="image/png">
+    <link href="{% static '/img/apple-touch-icon.png' %}" rel="apple-touch-icon" type="image/png">
+    <link href="{% static '/fontawesome/css/all.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static '/vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static '/css/style.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static '/css/login.css' %}" rel="stylesheet" type="text/css">
+    <style>
+        .bg-image {
+            background-image: url("{% static '/img/slide/slide-1.jpg' %}");
+            background-size: cover;
+            background-position: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row no-gutter">
+            <div class="d-none d-md-flex col-md-4 col-lg-6 bg-image"></div>
+            <div class="col-md-8 col-lg-6">
+                <div class="login d-flex align-items-center py-5">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-md-9 col-lg-8 mx-auto">
+                                <h5 class="mb-4"><a href="{% url 'dashboard' %}"><i class="fas fa-arrow-circle-left"></i> Voltar</a></h5>
+                                <h3 class="login-heading mb-4">Crie uma conta!</h3>
+                                <form method="post">
+                                    {% csrf_token %}
+                                    <div class="form-label-group">
+                                        <input name="username" value="{{form.username.value|default:''}}" type="text" id="inputEmail" class="form-control" placeholder="Utilizador" required>
+                                        <label for="inputEmail">Utilizador</label>
+                                    </div>
+                                    <div class="form-label-group">
+                                        <input name="password1" type="password" id="password1" class="form-control" placeholder="Palavra-passe" required>
+                                        <label for="password1">Palavra-passe</label>
+                                    </div>
+                                    <div class="form-label-group">
+                                        <input name="password2" type="password" id="password2" class="form-control" placeholder="Confirmar a Palavra-passe" required>
+                                        <label for="password2">Confirmar a Palavra-passe</label>
+                                    </div>
+                                    <div class="text-center text-danger pb-3">
+                                        {% if form.errors %}
+                                            {% for error in form.errors %}
+                                                {% if error == 'username' %}
+                                                    <a>O utilizador já existe!</a><br>
+                                                {% elif error == 'password2' %}
+                                                    <a>As palavra-passes introduzidas não são válidas!</a>
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% endif %}
+                                    </div>
+                                    <button type="submit" class="btn btn-lg btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2 text-white">Registar</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="{% static '/vendor/jquery/jquery.min.js' %}"></script>
+    <script src="{% static '/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+</body>
+</html>

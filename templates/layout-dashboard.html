@@ -1,0 +1,139 @@
+{% load static %}
+<!doctype html>
+<html lang="pt">
+    <head>
+        <meta charset="utf-8">
+        <meta content="width=device-width, initial-scale=1.0" name="viewport">
+        <title>{{title}} - Nucleus</title>
+        <link href="{% static '/img/favicon.png' %}" rel="icon" type="image/png">
+        <link href="{% static '/img/apple-touch-icon.png' %}" rel="apple-touch-icon" type="image/png">
+        <link href="{% static '/vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet" type="text/css">
+        <link href="{% static '/css/dashboard.css' %}" rel="stylesheet" type="text/css">
+        <link href="{% static '/css/inputs.css' %}" rel="stylesheet" type="text/css">
+        <link href="{% static '/fontawesome/css/all.css' %}" rel="stylesheet" type="text/css">
+    </head>
+    <body>
+        <header class="site-header">
+            <nav class="navbar navbar-expand-md navbar-fixed-left navbar-dark bg-steel fixed-top">
+                <div class="container">
+                    <a class="navbar-brand mr-4 lead">Painel Nucleus</a>
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle" aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarToggle">
+                        <div class="navbar-nav mr-auto">
+                            <a class="nav-item nav-link" href="{% url 'dashboard' %}"><i class="fas fa-hdd"></i> Painel</a>
+                            <a class="nav-item nav-link" href="{% url 'index' %}"><i class="fas fa-globe-europe"></i> Página</a>
+                        </div>
+                        <div class="navbar-nav">
+                            <a class="nav-item nav-link" href="{% url 'profile' username=request.user.username %}"><i class="fas fa-user"></i> {{request.user.get_full_name|default:request.user.username}}</a>
+                            <a class="nav-item nav-link" href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Sair</a>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </header>
+        <div class="modal fade" id="manage" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header bg-steel text-light">
+                        <h5 class="lead text-light" id="staticBackdropLabel">Gerir Utilizadores</h5>
+                        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <form method="post" action="{% url 'admin' %}">
+                    {% csrf_token %}
+                    <div class="modal-body">
+                        <label for="username">Nome do utilizador:</label>
+                        <input id="username" type="text" class="form-control" name="username" required>
+                        <label for="group">Grupo:</label>
+                        <select id="group" name="group" required>
+                            <option value="user">Utilizador</option>
+                            <option value="admin">Técnico</option>
+                        </select>
+                    </div>
+                    <div class="modal-footer">
+                        <a href="{% url 'register' %}" class="btn btn-outline-warning mr-auto">Registar Cliente</a>
+                        <div class="d-flex justify-content-center">
+
+                            <button style="margin-right: 5px;" type="submit" class="btn btn-outline-success">Enviar</button>
+                            <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Cancelar</button>
+                        </div>
+                    </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <main role="main" class="container">
+            <div class="row">
+                <div class="col-lg-8">
+                    {% if breadcrumb_title != null %}
+                        <div aria-label="breadcrumb " class="main-breadcrumb">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Painel Principal</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">{{breadcrumb_title}}</li>
+                            </ol>
+                        </div>
+                    {% endif %}
+                    {% block conteudo_dashboard %}{% endblock %}
+                </div>
+                <div class="col-lg-4 pb-3">
+                    <ul class="list-group">
+                        <li class="list-group-item list-group-item-light"><a href="{% url 'ticketlist' %}" class="text-reset"><i class="fas fa-user-clock"></i> Pedidos de Assistência</a></li>
+                        <li class="list-group-item list-group-item-light"><a href="{% url 'ticketarchive' %}" class="text-reset"><i class="fas fa-check-circle"></i> Arquivo de Pedidos</a></li>
+                        {% if permission %}
+                        <li class="list-group-item list-group-item-light"><a href="{% url 'contactlist' %}" class="text-reset"><i class="fas fa-address-card"></i> Pedidos de Contacto</a></li>
+                        <li class="list-group-item list-group-item-light"><a href="{% url 'contactarchive' %}" class="text-reset"><i class="fas fa-check-circle"></i> Arquivo de Contactos</a></li>
+                        {% endif %}
+                        <li class="list-group-item list-group-item-light"><a href="{% url 'files' %}" class="text-reset"><i class="fas fa-box"></i> Ficheiros</a></li>
+                        {% if permission %}
+                        <li class="list-group-item list-group-item-light"><a href="#" data-toggle="modal" data-target="#manage" class="text-reset"><i class="fas fa-cog"></i> Administração</a></li>
+                        {% endif %}
+                    </ul>
+                    <div class="my-3">
+                        <canvas id="graph"></canvas>
+                    </div>
+                </div>
+            </div>
+        </main>
+        <script src="{% static '/vendor/jquery/jquery.min.js' %}"></script>
+        <script src="{% static '/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+        <script src="{% static '/vendor/jquery.easing/jquery.easing.min.js' %}"></script>
+        <script src="{% static '/vendor/jquery-sticky/jquery.sticky.js' %}"></script>
+        <script src="{% static '/js/chart.bundle.js' %}"></script>
+        <script>
+            window.onload = () => {
+              window.myPie = new Chart(document.getElementById('graph').getContext('2d'), {
+                  type: 'bar',
+                  data: {
+                    datasets: [{
+                      data: {{data|safe}},
+                      backgroundColor: [
+                        'rgba(255, 0, 0, 0.2)',
+                        'rgba(0, 255, 68, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 0, 0, 0.5)',
+                        'rgba(0, 255, 68, 1)'
+                    ],
+                    borderWidth: 1,
+                  label: '{{label}}'
+                    }],
+                    labels: {{labels|safe}}
+                  },
+                  options: {
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true,
+                                callback: (value) => {if (value % 1 === 0) {return value}}
+                            }
+                        }]
+                    }
+                }
+              })
+            }
+      </script>
+    </body>
+</html>

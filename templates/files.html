@@ -1,0 +1,83 @@
+{% extends 'layout-dashboard.html' %}
+{% load static %}
+{% block conteudo_dashboard %}
+    <div id="accordion" class="mb-3">
+        {% for record in files %}
+            <div class="card">
+                <div class="card-header">
+                    <a class="card-link link-primary" data-toggle="collapse" href="#collapse{{record.id}}">
+                        {{record.name}} - {{record.date}}
+                    </a>
+                </div>
+                <div id="collapse{{record.id}}" class="collapse collapse" data-parent="#accordion">
+                    <div class="card-body">
+                        <span>Descrição: {{record.description}}</span>
+                        <div class="row pt-2">
+                            <a class="btn btn-outline-success ml-3" href="{{record.file.url}}" download>Transferir</a>
+                            {% if permission %}
+                            <button class="btn btn-outline-danger ml-2 mr-3" data-toggle="modal" data-target="#delete{{record.id}}">Apagar</button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% if permission %}
+            <div class="modal fade" id="delete{{record.id}}" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-sm">
+                    <div class="modal-content">
+                        <div class="modal-header bg-steel text-light justify-content-center">
+                            <h5 class="lead text-light" id="staticBackdropLabel">Deseja apagar o ficheiro?</h5>
+                        </div>
+                        <div class="modal-footer justify-content-center">
+                            <form method="post">
+                                {% csrf_token %}
+                                <input type="text" name="id" value="{{record.id}}" hidden>
+                                <button type="submit" class="btn btn-outline-danger">Sim</button>&nbsp;&nbsp;&nbsp;
+                                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Não</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        {% empty %}
+        <div class="text-center mb-3">
+            <span>Sem Ficheiros</span>
+        </div>
+        {% endfor %}
+    </div>
+    {% if permission %}
+        <a class="btn btn-success mb-3" href="#" data-toggle="modal" data-target="#add_file">Adicionar Ficheiro</a>
+        <div class="modal fade" id="add_file" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header bg-steel text-light">
+                        <h5 class="lead text-light" id="staticBackdropLabel">Adicionar Ficheiro</h5>
+                        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <form method="post" enctype="multipart/form-data" action="{% url 'files' %}">
+                    {% csrf_token %}
+                    <div class="modal-body">
+                        <div class="input-group">
+                            <label for="name">Nome:</label>
+                            <input name="name" id="name" type="text" required>
+                            <label for="description">Descrição:</label>
+                            <input name="description" id="description" type="text" required>
+                            <label for="file">Ficheiro:</label>
+                            <input type="file" id="file" class="form-control-file" name="file" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <div class="d-flex justify-content-center">
+                            <button style="margin-right: 5px;" type="submit" class="btn btn-outline-success">Enviar</button>
+                            <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Cancelar</button>
+                        </div>
+                    </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+{% endblock %}
