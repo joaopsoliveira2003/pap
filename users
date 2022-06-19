@@ -1,12 +1,11 @@
-Formato:
-nome_de_utilizador;palavra-passe
+username:password
 
-Tecnicos:
-joaooliv01;useruser
-ana.saraiva;useruser
+Técnicos:
+joaooliv01:useruser
+ana.saraiva:useruser
 
 Utilizadores:
-miguel.santos;useruser
-marta.pereira;useruser
-sara.sousa;useruser
-marcio.tavares;useruser
+miguel.santos:useruser
+marta.pereira:useruser
+sara.sousa:useruser
+marcio.tavares:useruser
