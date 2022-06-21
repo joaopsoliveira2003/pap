@@ -97,25 +97,13 @@ MEDIA_URL = "/media/"
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media') #algures no servidor
 
-"""
-EMAIL_HOST = "smtp.gmail.com"
+EMAIL_HOST = "smtp.host"
 
 EMAIL_PORT = 587
 
-EMAIL_HOST_USER = "joaooliv01.spam@gmail.com"
+EMAIL_HOST_USER = "user"
 
-EMAIL_HOST_PASSWORD = "joaooliv01spam123"
-
-EMAIL_USE_TLS = True
-"""
-
-EMAIL_HOST = "smtp.mailgun.org"
-
-EMAIL_PORT = 587
-
-EMAIL_HOST_USER = "postmaster@sandbox4e08a62fbd1a4f3a8a969c54b6cca682.mailgun.org"
-
-EMAIL_HOST_PASSWORD = "07f239213db53e61579b255ac343a43d-4de08e90-5ebd8134"
+EMAIL_HOST_PASSWORD = "password"
 
 EMAIL_USE_TLS = True
 

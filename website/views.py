@@ -1,10 +1,8 @@
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import render, redirect
 from django.core.paginator import Paginator
-from website.models import *
 from website.forms import *
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User, Group
-from django.db.models import Q
 from datetime import datetime
 from django.core.mail import send_mail
 from django.contrib.auth.forms import UserCreationForm
